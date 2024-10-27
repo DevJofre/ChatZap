@@ -5,13 +5,23 @@ def main(page):
 
     title = ft.Text("ChatZap")
 
+    def msg_tunel(message):
+        text = ft.Text(message)
+        chat.controls.append(text)
+
+        page.update()
+
+    page.pubsub.subscribe(msg_tunel)
+
     def send_message(event):
 
         name_user = box_chat.value
         text_dig = box_message.value
-        text = ft.Text(f"{name_user}: {text_dig}")
-        chat.controls.append(text)
 
+        message = f"{name_user}: {text_dig}"
+        page.pubsub.send_all(message)
+
+        box_message.value = ""
         page.update()
 
     box_message = ft.TextField(
@@ -31,6 +41,9 @@ def main(page):
         page.add(chat)
         page.add(row_send)
 
+        box_name = box_chat.value
+        message = f"{box_name} entro no chat!"
+        page.pubsub.send_all(message)
         page.update()
 
     title_popup = ft.Text("Bem Vindo ao ChatZap.")
@@ -53,4 +66,4 @@ def main(page):
     page.add(button_init)
 
 
-ft.app(main)
+ft.app(target=main, view="web_browser")
